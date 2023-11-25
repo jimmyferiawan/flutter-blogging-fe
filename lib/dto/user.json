@@ -1,0 +1,56 @@
+{
+    "signup_req": {
+        "username": "astuti",
+        "firstName": "Astuti",
+        "middleName": "Astuti",
+        "lastName": "Putri",
+        "mobile": "087784517741",
+        "email": "kacangserabii@mail.com",
+        "password": "123456"
+    },
+    "signup_resp": {
+        "error": false,
+        "message": "Registrasi Berhasil",
+        "data": {
+            "username": "astuti",
+            "firstName": "Astuti",
+            "middleName": "Astuti",
+            "lastName": "Putri",
+            "email": "kacangserabii@mail.com",
+            "mobile": "087784517741"
+        }
+    },
+    "signup_resp_abnormal": {
+        "error": true,
+        "message": "Nomoh HP sudah digunakan, silahkan pilih yang lain"
+    },
+    "login_req": {
+        "username": "jimmy",
+        "password": "123456"
+    },
+    "loign_resp": {
+        "error": false,
+        "message": "Berhasil login",
+        "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImppbW15IiwiZmlyc3ROYW1lIjoiSmltbXkiLCJtaWRkbGVOYW1lIjoiRmVyaWF3YW4iLCJsYXN0TmFtZSI6IiIsImVtYWlsIjoiZmVyaWF3YW5qaW1teUBtYWlsLmNvbSIsIm1vYmlsZSI6IjA4Nzc4NDUxNzc0OCIsImlhdCI6MTcwMDA5NzY2OCwiZXhwIjoxNzAwMTAwNjY4fQ._6BzLkxHcpkrVKG-H_9nz98o3KnAz6VaxLLxrQIwZFw"
+    },
+    "login_resp_abnormal": {
+        "error": true,
+        "message": "Wrong Username or Password."
+    },
+    "get_profile_resp": {
+        "error": false,
+        "message": "User found!",
+        "data": {
+            "username": "jimmy",
+            "firstname": "Jimmy",
+            "middlename": "Feriawan",
+            "lastname": "",
+            "intro": "Ini Bio profile",
+            "profile": null
+        }
+    },
+    "get_profile_resp_abnormal": {
+        "error": true,
+        "message": "User not found"
+    }
+}
