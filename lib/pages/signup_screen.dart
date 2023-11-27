@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/http_services/api_calls.dart';
 import 'package:flutter_application_1/dto/auth_dto.dart';
@@ -32,6 +33,7 @@ class _SignupFormState extends State<_SingupForm> {
     bool isKonfirmasiPasswordSama = false;
     bool isHurufBesar = false;
     bool isHurufKecil = false;
+    bool _isLoading = false;
 
     bool isPasswordSesuaiKetentuan() {
         if(isValidEightCharacter && isAdaHuruf && isAdaAngka && isKonfirmasiPasswordSama && isHurufBesar && isHurufKecil ) {
@@ -347,8 +349,8 @@ class _SignupFormState extends State<_SingupForm> {
                                             child: Wrap(
                                                 crossAxisAlignment: WrapCrossAlignment.center,
                                                 children: [
-                                                    Text("Konfirmasi password"),
-                                                    SizedBox(width: 8),
+                                                    const Text("Konfirmasi password"),
+                                                    const SizedBox(width: 8),
                                                     konfirmasiPasswordSama,
                                                 ],
                                             )
@@ -362,8 +364,8 @@ class _SignupFormState extends State<_SingupForm> {
                                             child: Wrap(
                                                 crossAxisAlignment: WrapCrossAlignment.center,
                                                 children: [
-                                                    Text("Terdapat huruf"),
-                                                    SizedBox(width: 8),
+                                                    const Text("Terdapat huruf"),
+                                                    const SizedBox(width: 8),
                                                     adaHuruf,
                                                 ],
                                             )
@@ -372,8 +374,8 @@ class _SignupFormState extends State<_SingupForm> {
                                             child: Wrap(
                                                 crossAxisAlignment: WrapCrossAlignment.center,
                                                 children: [
-                                                    Text("Huruf Besar"),
-                                                    SizedBox(width: 8),
+                                                    const Text("Huruf Besar"),
+                                                    const SizedBox(width: 8),
                                                     hurufBesar,
                                                 ],
                                             )
@@ -386,8 +388,8 @@ class _SignupFormState extends State<_SingupForm> {
                                             child: Wrap(
                                                 crossAxisAlignment: WrapCrossAlignment.center,
                                                 children: [
-                                                    Text('Terdapat angka'),
-                                                    SizedBox(width: 8),
+                                                    const Text('Terdapat angka'),
+                                                    const SizedBox(width: 8),
                                                     adaAngka,
                                                 ],
                                             )
@@ -396,8 +398,8 @@ class _SignupFormState extends State<_SingupForm> {
                                             child: Wrap(
                                                 crossAxisAlignment: WrapCrossAlignment.center,
                                                 children: [
-                                                    Text('Huruf Kecil'),
-                                                    SizedBox(width: 8),
+                                                    const Text('Huruf Kecil'),
+                                                    const SizedBox(width: 8),
                                                     // Icon(Icons.check_circle_outline, size: 16, color: Colors.green),
                                                     hurufKecil,
                                                 ],
@@ -411,44 +413,60 @@ class _SignupFormState extends State<_SingupForm> {
                     Padding(
                         padding: const EdgeInsets.symmetric(horizontal: xPadding, vertical: 16),
                         child: ElevatedButton(
-                            onPressed: () async{
+                            onPressed: _isLoading ? null : () async{
                                 debugPrint("Daftar clicked!");
                                 if (_signupFormKey.currentState!.validate()) {
-                                    Map<String, dynamic> daftar = await signUp(SignupReq(username: usernameController.text, firstName: firstNameController.text, mobile: noHandphoneController.text, email: emailController.text, password: passwordController.text));
-                                    int statusCode = daftar['status'];
+                                    setState(() {
+                                        _isLoading = true;
+                                    });
+                                    
+                                    try {
+                                        Map<String, dynamic> daftar = await signUp(SignupReq(username: usernameController.text, firstName: firstNameController.text, mobile: noHandphoneController.text, email: emailController.text, password: passwordController.text));
+                                        // Map<String, dynamic> daftar = await Future.delayed(const Duration(seconds: 3), () {
+                                        //     return {"status": 201, "body": '{ "error": false, "message": "Registrasi Berhasil", "data": { "username": "astuti", "firstName": "Astuti", "middleName": "Astuti", "lastName": "Putri", "email": "kacangserabii@mail.com", "mobile": "087784517741" } }' };
+                                        // }); // testing only
+                                        int statusCode = daftar['status'];
+                                        debugPrint(daftar.toString());
 
-                                    Map<String, dynamic> respBody = jsonDecode(daftar['body']);
+                                        Map<String, dynamic> respBody = jsonDecode(daftar['body']);
 
-                                    if(context.mounted) {
-                                        showDialog(
-                                            context: context, 
-                                            builder: (BuildContext context) {
-                                                BuildContext dialogContext = context;
-                                                return AlertDialog(
-                                                    title: Text(statusCode == 201 ? "berhasil" : "Gagal"),
-                                                    content: Text(statusCode == 201 ? "Pendaftaran berhasil, silahkan konfirmasi melalui link yang terkirim ke email anda" : respBody["message"]),
-                                                    actions: <Widget>[
-                                                        TextButton(
-                                                            onPressed: () {
-                                                                if(statusCode == 201) {
-                                                                    return context.go("/");
-                                                                } else {
-                                                                    return Navigator.pop(dialogContext);
-                                                                }
-                                                            },
-                                                            child: const Text('OK'),
-                                                        ),
-                                                    ],
-                                                );
-                                            }
-                                        );
+                                        if(context.mounted) {
+                                            showDialog(
+                                                context: context, 
+                                                builder: (BuildContext context) {
+                                                    BuildContext dialogContext = context;
+                                                    return AlertDialog(
+                                                        title: Text(statusCode == 201 ? "berhasil" : "Gagal"),
+                                                        content: Text(statusCode == 201 ? "Pendaftaran berhasil, silahkan konfirmasi melalui link yang terkirim ke email anda" : respBody["message"]),
+                                                        actions: <Widget>[
+                                                            TextButton(
+                                                                onPressed: () {
+                                                                    if(statusCode == 201) {
+                                                                        return context.go("/");
+                                                                    } else {
+                                                                        return Navigator.pop(dialogContext);
+                                                                    }
+                                                                },
+                                                                child: const Text('OK'),
+                                                            ),
+                                                        ],
+                                                    );
+                                                }
+                                            );
+                                        }
+                                    } catch (e) {
+                                        debugPrint("Error : ${e.toString()}");
+                                    } finally {
+                                        setState(() {
+                                            _isLoading = false;
+                                        });
                                     }
                                 } else {
 
                                 }
                                 // Map<String, dynamic> daftar = await signUp(SignupReq(username: usernameController.text, firstName: firstNameController.text, mobile: noHandphoneController.text, email: emailController.text, password: passwordController.text));
                             },
-                            child: const Text('Daftar'),
+                            child: _isLoading ?  const CupertinoActivityIndicator(color: Colors.blue,) : const Text('Daftar'),
                         ),
                     ),
                     Padding(
