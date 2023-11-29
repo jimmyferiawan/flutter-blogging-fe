@@ -140,6 +140,7 @@ class _SignupFormState extends State<_SingupForm> {
                     Padding(
                         padding: const EdgeInsets.symmetric(horizontal: xPadding, vertical: 16),
                         child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                                 Expanded(
                                     child: TextFormField(
@@ -228,6 +229,7 @@ class _SignupFormState extends State<_SingupForm> {
                     Padding(
                         padding: const EdgeInsets.symmetric(horizontal: xPadding, vertical: 16),
                         child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center ,
                             children: <Widget>[
                                 Expanded(
@@ -322,6 +324,12 @@ class _SignupFormState extends State<_SingupForm> {
                                                 icon: Icon(_passwordConfirmObsecured ? Icons.visibility_off : Icons.visibility)
                                             )
                                         ),
+                                        validator: (value) {
+                                            if(value != passwordController.text) {
+                                                return "Password tidak sama";
+                                            }
+                                            return null;
+                                        },
                                     )
                                 ),
                             ],
