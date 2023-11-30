@@ -1,0 +1,27 @@
+import 'package:flutter/material.dart';
+
+class ScrollableScreen extends StatelessWidget {
+    const ScrollableScreen({
+        super.key,
+        required this.children,
+    });
+
+    final Widget children;
+
+    @override
+    Widget build(BuildContext context){
+        return LayoutBuilder(
+            builder: (context, constraints) {
+                return SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                            minHeight: constraints.maxHeight,
+                        ),
+                        child: children
+                    ),
+                );
+            },
+        );
+    }
+}
