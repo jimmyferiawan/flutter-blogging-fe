@@ -232,10 +232,10 @@ class UserData {
             username: json['username'] as String,
             email: json['email'] as String,
             mobile: json['mobile'] as String,
-            firstName: json[''] as String,
-            intro: json[''] as String,
-            profile: json[''] as String,
-            birthdate: json[''] as String,
+            firstName: json['firstName'] as String,
+            intro: json['intro'] as String,
+            profile: json['profile'] as String,
+            birthdate: json['birthdate'] as String,
         );
     }
 
@@ -254,5 +254,9 @@ class UserData {
     factory UserData.emptyValue() {
         return const UserData(username: "", email: "", mobile: "", firstName: "", intro: "", profile: "", birthdate: "");
     }
-
+    
+    @override
+    String toString() {
+        return '{ "username": $username, "email": $email, "mobile": $mobile, "firstName": $firstName, "intro": $intro, "profile": $profile, "birthdate": $birthdate }';
+    }
 }
