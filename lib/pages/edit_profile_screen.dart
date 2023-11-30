@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/helpers/month_mapper.dart';
 import 'package:flutter_application_1/core/helpers/persistence_storage.dart';
+import 'package:flutter_application_1/store/auth_store.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class EditProfileScreen extends StatelessWidget {
     const EditProfileScreen({Key? key}) : super(key: key);
@@ -15,12 +17,12 @@ class EditProfileScreen extends StatelessWidget {
                 leading: GestureDetector(
                     child: const Icon(Icons.close_rounded, color: Colors.white),
                     onTap: () {
-                        Map<String, dynamic> _userData = GoRouterState.of(context).extra! as Map<String, dynamic>;
-                        String username = _userData['username']! as String;
+                        // Map<String, dynamic> _userData = GoRouterState.of(context).extra! as Map<String, dynamic>;
+                        // String username = _userData['username']! as String;
 
-                        getJwtToken().then((value) {
-                            Router.neglect(context, () => context.go("/profile", extra:{"username":  username, "jwt": value}));
-                        });
+                        // getJwtToken().then((value) {
+                            Router.neglect(context, () => context.go("/profile"));
+                        // });
                     }
                 )
             ),
@@ -52,14 +54,14 @@ class EditProfileScreen extends StatelessWidget {
     }
 }
 
-class _EditProfileForm extends StatefulWidget {
+class _EditProfileForm extends StatefulHookConsumerWidget {
   const _EditProfileForm({ Key? key }) : super(key: key);
 
   @override
-  _EditProfileFormState createState() => _EditProfileFormState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _EditProfileFormState();
 }
 
-class _EditProfileFormState extends State<_EditProfileForm> {
+class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
     final _formKey = GlobalKey<FormState>();
     TextEditingController inputUsernameController = TextEditingController();
     TextEditingController inputNamaController = TextEditingController();
@@ -77,13 +79,15 @@ class _EditProfileFormState extends State<_EditProfileForm> {
     
     @override
     Widget build(BuildContext context) {
-        Map<String, dynamic> _userData = GoRouterState.of(context).extra! as Map<String, dynamic>;
-        inputUsernameController.text = _userData['username']! as String;
-        inputNamaController.text = _userData['nama']! as String;
-        inputEmailController.text = _userData['email']! as String;
-        inpuIntroController.text = _userData['intro']! as String;
-        inpuMobileController.text = _userData['phone']! as String;
-        inpuDateController.text = _userData['birthdate']! as String;
+        // Map<String, dynamic> _userData = GoRouterState.of(context).extra! as Map<String, dynamic>;
+        var userDataState = ref.watch(userDataStateProvider);
+        debugPrint("halo: ${userDataState.toString()}");
+        inputUsernameController.text = userDataState.username;//_userData['username']! as String;
+        inputNamaController.text = userDataState.firstName;//_userData['nama']! as String;
+        inputEmailController.text = userDataState.email;//_userData['email']! as String;
+        inpuIntroController.text = userDataState.intro!;//_userData['intro']! as String;
+        inpuMobileController.text = userDataState.mobile;//_userData['phone']! as String;
+        inpuDateController.text = userDataState.birthdate!;//_userData['birthdate']! as String;
 
         return Form(
             key: _formKey,
