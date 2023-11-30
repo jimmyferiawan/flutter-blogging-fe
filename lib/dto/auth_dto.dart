@@ -35,6 +35,14 @@ class SigninResp {
         message: json['message'] as String,
         accessToken: json['accessToken'] as String);
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+        "error": error,
+        "message": message,
+        "accessToken": accessToken
+    };
+  }
 }
 
 class SignupReq {
@@ -241,6 +249,10 @@ class UserData {
             "profile": profile,
             "birthdate": birthdate,
         };
+    }
+
+    factory UserData.emptyValue() {
+        return const UserData(username: "", email: "", mobile: "", firstName: "", intro: "", profile: "", birthdate: "");
     }
 
 }
