@@ -11,8 +11,7 @@ class ProfileScreen extends StatelessWidget {
   
     @override
     Widget build(BuildContext context) {
-        Map<String, String> objSample = GoRouterState.of(context).extra! as Map<String, String>;
-
+        // Map<String, String> objSample = GoRouterState.of(context).extra! as Map<String, String>;
         // return Scaffold(
         //     appBar: AppBar(
         //         title: const Text("Profile"),
@@ -27,13 +26,15 @@ class ProfileScreen extends StatelessWidget {
         //         ],
         //     ),
         // );
-        return _UserProfile(params: objSample);
+        // return _UserProfile(params: objSample);
+        return const _UserProfile();
     }
 }
 
 class _UserProfile extends StatefulWidget {
-    final Map<String, dynamic> params;
-    const _UserProfile({Key? key, required this.params}) : super(key: key);
+    // final Map<String, dynamic> params;
+    // const _UserProfile({Key? key, required this.params}) : super(key: key);
+    const _UserProfile({Key? key}) : super(key: key);
 
     @override
     _UserProfileState createState() => _UserProfileState();
@@ -44,8 +45,10 @@ class _UserProfileState extends State<_UserProfile> {
     String jsonProfile = "";
     late CrossAxisAlignment _alignment;
 
-    Future<Map<String, dynamic>> _getProfileData(String jwt, String username) async {
-        UserDataResp resp = await getUserData(jwt, username);
+    Future<Map<String, dynamic>> _getProfileData() async {
+        String userName = await getUsername();
+        String token = await getJwtToken();
+        UserDataResp resp = await getUserData(token, userName);
         Map<String, dynamic> respJson = resp.toJson();
 
         if(respJson['error']! as bool) {
@@ -73,15 +76,7 @@ class _UserProfileState extends State<_UserProfile> {
     void initState() {
         super.initState();
         _alignment = CrossAxisAlignment.center;
-        _userData = getJwtToken().then((value) {
-            // TODO: remove this code on release, just to see loading indicator
-            return Future.delayed(const Duration(seconds: 2), () {
-                return _getProfileData(value, widget.params['username'] ?? "");
-            });
-
-            // TODO: use this on release/production
-            // return _getProfileData(value, widget.params['username'] ?? "");
-        });
+        _userData = _getProfileData();
     }
 
     
@@ -103,10 +98,7 @@ class _UserProfileState extends State<_UserProfile> {
                 onRefresh: () async {
                     // return Future<void>.delayed(const Duration(seconds: 3), () {
                         setState(() {
-                            _userData = getJwtToken().then((value) {
-                                // jsonProfile = ;
-                                return _getProfileData(value, widget.params['username'] ?? "");
-                            }); 
+                            _userData = _getProfileData();
                         });
                     // });
                 },
@@ -143,7 +135,8 @@ class _UserProfileState extends State<_UserProfile> {
                                                                         content: const Text("Silahkan login ulang"),
                                                                         actions: <Widget>[
                                                                             TextButton(
-                                                                                onPressed: () {
+                                                                                onPressed: () async {
+                                                                                    clearSession();
                                                                                     return context.go("/");
                                                                                 },
                                                                                 child: const Text('OK'),
