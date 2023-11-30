@@ -4,7 +4,9 @@ import 'package:flutter_application_1/core/helpers/month_mapper.dart';
 import 'package:flutter_application_1/core/helpers/persistence_storage.dart';
 import 'package:flutter_application_1/core/http_services/api_calls.dart';
 import 'package:flutter_application_1/dto/auth_dto.dart';
+import 'package:flutter_application_1/store/auth_store.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class ProfileScreen extends StatelessWidget {
     const ProfileScreen({Key? key}) : super(key: key);
@@ -31,16 +33,16 @@ class ProfileScreen extends StatelessWidget {
     }
 }
 
-class _UserProfile extends StatefulWidget {
+class _UserProfile extends StatefulHookConsumerWidget {
     // final Map<String, dynamic> params;
     // const _UserProfile({Key? key, required this.params}) : super(key: key);
-    const _UserProfile({Key? key}) : super(key: key);
+    const _UserProfile({super.key});
 
     @override
-    _UserProfileState createState() => _UserProfileState();
+    ConsumerState<ConsumerStatefulWidget> createState() => _UserProfileState();
 }
 
-class _UserProfileState extends State<_UserProfile> {
+class _UserProfileState extends ConsumerState<_UserProfile> {
     late Future<Map<String, dynamic>> _userData;
     String jsonProfile = "";
     late CrossAxisAlignment _alignment;
@@ -54,6 +56,9 @@ class _UserProfileState extends State<_UserProfile> {
         if(respJson['error']! as bool) {
             throw UnathorizedError(message: respJson["message"] as String);
         } else {
+            debugPrint("UserData : ${resp.data.toString()}");
+            ref.read(userDataStateProvider.notifier).setData(UserData.fromJson(resp.data));
+            // debugPrint(UserData.fromJson(resp.data).toString());
             return respJson;
         }
     }
