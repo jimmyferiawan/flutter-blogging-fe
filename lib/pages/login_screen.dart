@@ -214,16 +214,23 @@ class AccountScreen extends ConsumerWidget {
     Widget build(BuildContext context, WidgetRef ref) {
         final accountData = ref.watch(userDataStateProvider)!;
         
-        return ScrollableScreen(
-            children: Column(
-                children: <Widget>[
-                    ProfileComponent(accountData: accountData, logoutFunction: () async{
-                        debugPrint("logout");
-                        await clearSession();
-                        ref.read(userDataStateProvider.notifier).setData(null);
-                    },)
-                ],
-            )
+        return RefreshIndicator(
+            onRefresh: () async{
+                UserDataResp userDataResp = await getUserData(await getJwtToken(), await getUsername());
+                UserData accountData = UserData.fromJson(userDataResp.data);
+                ref.read(userDataStateProvider.notifier).setData(accountData);
+            },
+            child: ScrollableScreen(
+                children: Column(
+                    children: <Widget>[
+                        ProfileComponent(accountData: accountData, logoutFunction: () async{
+                            debugPrint("logout");
+                            await clearSession();
+                            ref.read(userDataStateProvider.notifier).setData(null);
+                        },)
+                    ],
+                )
+            ), 
         );
     }
 }

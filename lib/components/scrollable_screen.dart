@@ -13,6 +13,7 @@ class ScrollableScreen extends StatelessWidget {
         return LayoutBuilder(
             builder: (context, constraints) {
                 return SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 0),
                     child: ConstrainedBox(
                         constraints: BoxConstraints(
