@@ -115,4 +115,42 @@ Future<UserDataResp> getUserData(String jwt, String username) async {
     return userDataResp;
 
 }
-//TODO: signup
+
+Future<UserData> updateUserData(String? username, String? token, UserData? data) async{
+    String endpoint = "$BASE_URL/$PROFILE/$username";
+    String loggerName = "PUT $BASE_URL/$PROFILE/$username";
+    // UserData data = UserData.emptyValue();
+    Map<String, String> reqHeaders = {
+        "Authorization": "Bearer $token"
+    };
+    // String reqBody = jsonEncode(data!.toJson());
+
+    httpLogging("$loggerName Request", {"headers": reqHeaders,"body": data!.toJson()}.toString());
+
+    http.Response? response;
+
+    try {
+        response = await http.put(
+            Uri.parse(endpoint),
+            headers: reqHeaders,
+            body: data.toJson()
+        );
+        Map<String, dynamic> respBody = jsonDecode(response.body);
+        Map<String, dynamic> rsp = respBody['data'];
+        debugPrint("test : ${respBody['data']['username']} ${respBody['data'].runtimeType}");
+        UserData.fromJson(rsp);
+    } catch (e) {
+        debugPrint("Error updateUserData : ${e.toString()}");
+        debugPrintStack();
+    }
+
+    httpLogging("$loggerName Response", response!.body.toString());
+
+    return data;
+}
+
+void httpLogging(String name, String value) {
+    DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch);
+    debugPrint("${tsdate.year.toString()}-${tsdate.month.toString().length == 1 ? "0" : ""}${tsdate.month.toString()}-${tsdate.day.toString().length == 1 ? "0" : ""}${tsdate.day.toString()} ${tsdate.hour.toString().length == 1 ? "0" : ""}${tsdate.hour.toString()}:${tsdate.minute.toString().length == 1 ? "0" : ""}${tsdate.minute.toString()}:${tsdate.second.toString().length == 1 ? "0" : ""}${tsdate.second.toString()}.${tsdate.millisecond.toString()} $name : ");
+    debugPrint(value);
+}
