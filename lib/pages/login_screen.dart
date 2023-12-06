@@ -243,6 +243,7 @@ class ProfileComponent extends StatelessWidget {
         return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
+                const SizedBox(height: 12,),
                 Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4.0),
                     child: Text("Username: ${accountData.username}"),
@@ -310,6 +311,7 @@ class ProfileComponent extends StatelessWidget {
                         ],
                     )
                 ),
+                const SizedBox(height: 12,),
             ],
         );
     }
