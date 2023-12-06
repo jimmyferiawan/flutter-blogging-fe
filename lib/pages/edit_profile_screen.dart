@@ -208,7 +208,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
                                     UserData userData;
                                     try {
                                         formData = UserData(username: inputUsernameController.text, email: inputEmailController.text, mobile: inpuMobileController.text, firstName: inputNamaController.text, intro: inpuIntroController.text, profile: "", birthdate: inpuDateController.text);
-                                        userData = await updateUserData(userDataState!.username, await getJwtToken(), formData);
+                                        userData = await updateUserData(userDataState.username, await getJwtToken(), formData);
                                         ref.read(userDataStateProvider.notifier).setData(userData);
                                     } catch (e) {
                                         debugPrint("Error update data");
