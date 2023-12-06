@@ -15,12 +15,11 @@ class LoginScreen extends ConsumerWidget {
 
     @override
     Widget build(BuildContext context, ref) {
-        const appTitle = 'Login';
         final isLogin = ref.watch(userDataStateProvider);
 
         return Scaffold(
             appBar: AppBar(
-                title: const Text(appTitle),
+                title: Text(isLogin == null ? "Login" : "Account"),
             ),
             // body: const _MyCustomForm(),
             body: isLogin == null ? const LoginForm() : const AccountScreen(),
