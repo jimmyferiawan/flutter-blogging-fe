@@ -52,5 +52,25 @@
     "get_profile_resp_abnormal": {
         "error": true,
         "message": "User not found"
+    },
+    "update_user_profile_req": {
+        "username": "jimmy",
+        "email": "feriawanjimmy@mail.com",
+        "firstName": "Jimmy Feriawan",
+        "mobile": "087784517748",
+        "intro": "Ini Bio profile jimmy",
+        "birthdate": "30-08-1945"
+    },
+    "update_user_profile_resp": {
+        "error": false,
+        "message": "Berhasil update data",
+        "data": {
+            "username": "jimmy",
+            "firstName": "Jimmy Feriawana",
+            "mobile": "087784517748",
+            "email": "feriawanjimmy@mail.com",
+            "birthdate": "30-08-1945",
+            "intro": "Ini Bio profile"
+        }
     }
 }
