@@ -229,7 +229,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
                             child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                    const Text("Login"),
+                                    const Text("Update Data"),
                                     if (isLoading.value)...[const SizedBox(width: 12) ,const CupertinoActivityIndicator(color: Colors.blue,)]
                                 ],
                             )
