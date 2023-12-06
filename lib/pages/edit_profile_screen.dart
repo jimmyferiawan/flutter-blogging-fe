@@ -1,9 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/helpers/month_mapper.dart';
 import 'package:flutter_application_1/core/helpers/persistence_storage.dart';
 import 'package:flutter_application_1/core/http_services/api_calls.dart';
 import 'package:flutter_application_1/dto/auth_dto.dart';
 import 'package:flutter_application_1/store/auth_store.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
@@ -55,7 +57,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
     TextEditingController inpuIntroController = TextEditingController();
     TextEditingController inpuMobileController = TextEditingController();
     TextEditingController inpuDateController = TextEditingController();
-    bool isLoading = false;
+    // bool isLoading = false;
 
     @override
     void initState() {
@@ -68,6 +70,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
     Widget build(BuildContext context) {
         // Map<String, dynamic> _userData = GoRouterState.of(context).extra! as Map<String, dynamic>;
         var userDataState = ref.watch(userDataStateProvider)!;
+        ValueNotifier<bool> isLoading = useState(false);
         debugPrint("halo: ${userDataState.toString()}");
         inputUsernameController.text = userDataState.username;//_userData['username']! as String;
         inputNamaController.text = userDataState.firstName;//_userData['nama']! as String;
@@ -175,7 +178,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
                             onTap: () async{
                                 DateTime? pickedDate = await showDatePicker(
                                     context: context,
-                                    initialDate: DateTime.now(), //get today's date
+                                    initialDate: datePickerParser(inpuDateController.text) == "" ? DateTime.now() : DateTime.parse(inpuDateController.text.split("-").reversed.join("")), //get today's date
                                     firstDate: DateTime(1900), //DateTime.now() - not to allow to choose before today.
                                     lastDate: DateTime.now()
                                 );
@@ -197,15 +200,17 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
                     Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         child: ElevatedButton(
-                            onPressed: isLoading ? null : () async{
+                            onPressed: isLoading.value ? null : () async{
                                 // setState(() {
                                 //     isLoading = true;
                                 // });
                                 // debugPrint(_formKey.currentState.toString());
                                 if(_formKey.currentState!.validate()) {
-                                    await Future.delayed(const Duration(seconds: 2));
-                                    UserData formData;
                                     UserData userData;
+                                    UserData formData = UserData(username: inputUsernameController.text, email: inputEmailController.text, mobile: inpuMobileController.text, firstName: inputNamaController.text, intro: inpuIntroController.text, profile: "", birthdate: inpuDateController.text);
+                                    ref.read(userDataStateProvider.notifier).setData(formData);
+                                    isLoading.value = true;
+                                    await Future.delayed(const Duration(seconds: 2));
                                     try {
                                         formData = UserData(username: inputUsernameController.text, email: inputEmailController.text, mobile: inpuMobileController.text, firstName: inputNamaController.text, intro: inpuIntroController.text, profile: "", birthdate: inpuDateController.text);
                                         userData = await updateUserData(userDataState.username, await getJwtToken(), formData);
@@ -214,14 +219,20 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
                                         debugPrint("Error update data");
                                         debugPrintStack();
                                     } finally {
-                                        // setState(() {
-                                        //     isLoading = false;
-                                        // });
+                                        setState(() {
+                                            isLoading.value = false;
+                                        });
                                     }
                                     debugPrint("Simpan data");
                                 }
                             }, 
-                            child: const Text("Simpan")
+                            child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                    const Text("Login"),
+                                    if (isLoading.value)...[const SizedBox(width: 12) ,const CupertinoActivityIndicator(color: Colors.blue,)]
+                                ],
+                            )
                         )
                     ),
                 ],
