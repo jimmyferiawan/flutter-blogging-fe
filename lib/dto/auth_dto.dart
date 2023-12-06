@@ -206,6 +206,22 @@ class UserDataResp {
             }
         };
     }
+
+    factory UserDataResp.emptyValue() {
+        return const UserDataResp(
+            error: true, 
+            message: "", 
+            data: {
+                "username": "",
+                "email": "",
+                "mobile": "",
+                "firstName": "",
+                "intro": "",
+                "profile": "",
+                "birthdate": ""
+            }
+        );
+    }
 }
 
 class UserData {
@@ -233,9 +249,9 @@ class UserData {
             email: json['email'] as String,
             mobile: json['mobile'] as String,
             firstName: json['firstName'] as String,
-            intro: json['intro'] as String,
-            profile: json['profile'] as String,
-            birthdate: json['birthdate'] as String,
+            intro: json['intro'] ?? "",
+            profile: json['profile'] ?? "",
+            birthdate: json['birthdate'] ?? "",
         );
     }
 

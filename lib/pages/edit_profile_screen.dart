@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/helpers/month_mapper.dart';
+import 'package:flutter_application_1/core/helpers/persistence_storage.dart';
+import 'package:flutter_application_1/core/http_services/api_calls.dart';
+import 'package:flutter_application_1/dto/auth_dto.dart';
 import 'package:flutter_application_1/store/auth_store.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -16,7 +19,7 @@ class EditProfileScreen extends StatelessWidget {
                 leading: GestureDetector(
                     child: const Icon(Icons.close_rounded, color: Colors.white),
                     onTap: () {
-                        Router.neglect(context, () => context.go("/profile"));
+                        Router.neglect(context, () => context.go("/"));
                     }
                 )
             ),
@@ -52,6 +55,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
     TextEditingController inpuIntroController = TextEditingController();
     TextEditingController inpuMobileController = TextEditingController();
     TextEditingController inpuDateController = TextEditingController();
+    bool isLoading = false;
 
     @override
     void initState() {
@@ -63,7 +67,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
     @override
     Widget build(BuildContext context) {
         // Map<String, dynamic> _userData = GoRouterState.of(context).extra! as Map<String, dynamic>;
-        var userDataState = ref.watch(userDataStateProvider);
+        var userDataState = ref.watch(userDataStateProvider)!;
         debugPrint("halo: ${userDataState.toString()}");
         inputUsernameController.text = userDataState.username;//_userData['username']! as String;
         inputNamaController.text = userDataState.firstName;//_userData['nama']! as String;
@@ -193,9 +197,27 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
                     Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         child: ElevatedButton(
-                            onPressed: () {
-                                debugPrint(_formKey.currentState.toString());
+                            onPressed: isLoading ? null : () async{
+                                // setState(() {
+                                //     isLoading = true;
+                                // });
+                                // debugPrint(_formKey.currentState.toString());
                                 if(_formKey.currentState!.validate()) {
+                                    await Future.delayed(const Duration(seconds: 2));
+                                    UserData formData;
+                                    UserData userData;
+                                    try {
+                                        formData = UserData(username: inputUsernameController.text, email: inputEmailController.text, mobile: inpuMobileController.text, firstName: inputNamaController.text, intro: inpuIntroController.text, profile: "", birthdate: inpuDateController.text);
+                                        userData = await updateUserData(userDataState!.username, await getJwtToken(), formData);
+                                        ref.read(userDataStateProvider.notifier).setData(userData);
+                                    } catch (e) {
+                                        debugPrint("Error update data");
+                                        debugPrintStack();
+                                    } finally {
+                                        // setState(() {
+                                        //     isLoading = false;
+                                        // });
+                                    }
                                     debugPrint("Simpan data");
                                 }
                             }, 
