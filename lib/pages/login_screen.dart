@@ -58,31 +58,13 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                         password: passwordController.text
                     )
                 );
-                // SharedPreferences prefs = await SharedPreferences.getInstance();
                 
-                debugPrint("{'error': '${resp.error}', 'message': '${resp.message}', 'accessToken': '${resp.accessToken}'}");
+                // debugPrint("{'error': '${resp.error}', 'message': '${resp.message}', 'accessToken': '${resp.accessToken}'}");
                 if(resp.error) {
+                    setState(() => message = resp.message);
                     if(context.mounted) {
-                        showDialog(
-                            context: context, 
-                            builder: (BuildContext context) {
-                                BuildContext dialogContext = context;
-                                return AlertDialog(
-                                    title: const Text('Oops!'),
-                                    content: Text(resp.message),
-                                    actions: <Widget>[
-                                        TextButton(
-                                            onPressed: () {
-                                                return Navigator.pop(dialogContext);
-                                            },
-                                            child: const Text('OK'),
-                                        ),
-                                    ],
-                                );
-                            }
-                        );
+                        showCustomDialog(context, message);
                     }
-                    
                 } else {
                     await setJwtToken(resp.accessToken);
                     await setUsername(usernameController.text);
@@ -91,13 +73,12 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                 }
             } catch (e) {
                 debugPrint("error $e");
-                setState(() {
-                    message = "Terjadi kesalahan, silahkan coba beberapa saat lagi";
-                });
+                setState(() => message = "Terjadi kesalahan, silahkan coba beberapa saat lagi");
+                if(context.mounted) {
+                    showCustomDialog(context, message);
+                }
             } finally {
-                setState(() {
-                    isLoading.value = false;
-                });
+                setState(() => isLoading.value = false);
             }
         } 
         
@@ -139,9 +120,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                                 border: const OutlineInputBorder(),
                                 suffixIcon: IconButton(
                                     onPressed: () {
-                                        setState(() {
-                                            isShowPassword.value = !isShowPassword.value;
-                                        });
+                                        setState(() => isShowPassword.value = !isShowPassword.value);
                                     }, 
                                     icon: Icon(iconData)
                                 )
@@ -322,4 +301,25 @@ class ProfileComponent extends StatelessWidget {
             ],
         );
     }
+}
+
+void showCustomDialog(BuildContext context, String message) {
+    showDialog(
+        context: context, 
+        builder: (BuildContext context) {
+            BuildContext dialogContext = context;
+            return AlertDialog(
+                title: const Text('Oops!'),
+                content: Text(message),
+                actions: <Widget>[
+                    TextButton(
+                        onPressed: () {
+                            return Navigator.pop(dialogContext);
+                        },
+                        child: const Text('OK'),
+                    ),
+                ],
+            );
+        }
+    );
 }
