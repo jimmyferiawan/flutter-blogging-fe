@@ -5,7 +5,6 @@ class UnathorizedError extends Error{
 
     @override
     String toString() {
-        // TODO: implement toString
         return message;
     }
 }
