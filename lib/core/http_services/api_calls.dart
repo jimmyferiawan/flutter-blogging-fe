@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/core/helpers/error_mapper.dart';
+import 'package:flutter_application_1/core/helpers/persistence_storage.dart';
 import 'package:flutter_application_1/core/http_services/path.dart';
 import 'package:flutter_application_1/dto/auth_dto.dart';
 import 'package:http/http.dart' as http;
@@ -149,4 +151,24 @@ void httpLogging(String name, String value) {
     DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch);
     debugPrint("${tsdate.year.toString()}-${tsdate.month.toString().length == 1 ? "0" : ""}${tsdate.month.toString()}-${tsdate.day.toString().length == 1 ? "0" : ""}${tsdate.day.toString()} ${tsdate.hour.toString().length == 1 ? "0" : ""}${tsdate.hour.toString()}:${tsdate.minute.toString().length == 1 ? "0" : ""}${tsdate.minute.toString()}:${tsdate.second.toString().length == 1 ? "0" : ""}${tsdate.second.toString()}.${tsdate.millisecond.toString()} $name : $value");
     // debugPrint();
+}
+
+Future<UserData?> initUserAccount() async{
+    String jwt = await getJwtToken();
+    String username = await getUsername();
+    bool isSession = jwt != "" && username != "";
+    UserDataResp userDataResp ;
+    UserData? userData;
+    
+    try {
+        userDataResp = !isSession ? UserDataResp.emptyValue() : await getUserData(jwt, username);
+        userData = userDataResp.error ? null : UserData.fromJson(userDataResp.data);
+        if(userDataResp.error) {
+            throw UnathorizedError(message: "Invalid login session");
+        }
+    } catch (e) {
+        throw UnathorizedError(message: "Invalid login session");
+    }
+
+    return userData;
 }
