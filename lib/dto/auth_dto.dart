@@ -1,48 +1,53 @@
 class SigninReq {
-  final String username;
-  final String password;
+    final String username;
+    final String password;
 
-  const SigninReq({
-    required this.username,
-    required this.password,
-  });
+    const SigninReq({
+        required this.username,
+        required this.password,
+    });
 
-  factory SigninReq.fromJson(Map<String, dynamic> json) {
-    return SigninReq(
-      username: json['username'] as String,
-      password: json['password'] as String,
-    );
-  }
+    factory SigninReq.fromJson(Map<String, dynamic> json) {
+        return SigninReq(
+            username: json['username'] as String,
+            password: json['password'] as String,
+        );
+    }
 
-  static Map<String, dynamic> toJson(SigninReq value) =>
-      {"username": value.username, "password": value.password};
+    Map<String, dynamic> toJson() {
+        return {
+            "username": username,
+            "password": password,
+        };
+    }
 }
 
 class SigninResp {
-  final bool error;
-  final String message;
-  final String accessToken;
+    final bool error;
+    final String message;
+    final String accessToken;
 
-  const SigninResp({
-    required this.error,
-    required this.message,
-    required this.accessToken,
-  });
+    const SigninResp({
+        required this.error,
+        required this.message,
+        required this.accessToken,
+    });
 
-  factory SigninResp.fromJson(Map<String, dynamic> json) {
-    return SigninResp(
-        error: json['error'] as bool,
-        message: json['message'] as String,
-        accessToken: json['accessToken'] as String);
-  }
+    factory SigninResp.fromJson(Map<String, dynamic> json) {
+        return SigninResp(
+            error: json['error'] as bool,
+            message: json['message'] as String,
+            accessToken: json['accessToken'] as String
+        );
+    }
 
-  Map<String, dynamic> toJson() {
-    return {
-        "error": error,
-        "message": message,
-        "accessToken": accessToken
-    };
-  }
+    Map<String, dynamic> toJson() {
+        return {
+            "error": error,
+            "message": message,
+            "accessToken": accessToken
+        };
+    }
 }
 
 class SignupReq {
@@ -151,19 +156,6 @@ class SignupRespData {
 
 }
 
-// {
-//     "error": false,
-//     "message": "Ok",
-//     "data": {
-//         "username": "jimmy",
-//         "email": "feriawanjimmy@mail.com",
-//         "mobile": "087784517748",
-//         "firstName": "Jimmy",
-//         "intro": "Ini Bio profile",
-//         "profile": null,
-//         "birthdate": "30-07-1998"
-//     }
-// }
 class UserDataResp {
     final bool error;
     final String message;

@@ -61,7 +61,6 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
 
     @override
     void initState() {
-        // TODO: implement initState
         super.initState();
         
     }
@@ -71,7 +70,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
         // Map<String, dynamic> _userData = GoRouterState.of(context).extra! as Map<String, dynamic>;
         var userDataState = ref.watch(userDataStateProvider)!;
         ValueNotifier<bool> isLoading = useState(false);
-        debugPrint("halo: ${userDataState.toString()}");
+        // debugPrint("halo: ${userDataState.toString()}");
         inputUsernameController.text = userDataState.username;//_userData['username']! as String;
         inputNamaController.text = userDataState.firstName;//_userData['nama']! as String;
         inputEmailController.text = userDataState.email;//_userData['email']! as String;
@@ -201,10 +200,6 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         child: ElevatedButton(
                             onPressed: isLoading.value ? null : () async{
-                                // setState(() {
-                                //     isLoading = true;
-                                // });
-                                // debugPrint(_formKey.currentState.toString());
                                 if(_formKey.currentState!.validate()) {
                                     UserData userData;
                                     UserData formData = UserData(username: inputUsernameController.text, email: inputEmailController.text, mobile: inpuMobileController.text, firstName: inputNamaController.text, intro: inpuIntroController.text, profile: "", birthdate: inpuDateController.text);
