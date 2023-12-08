@@ -6,16 +6,18 @@ import 'package:flutter_application_1/dto/auth_dto.dart';
 import 'package:http/http.dart' as http;
 
 Future<SigninResp> login(SigninReq bodyReq) async {
+    String endpoint = "$BASE_URL/$LOGIN";
+    Map<String, String> reqHeaders = {
+        'Content-Type': 'application/json',
+    };
+    
+    httpLogging("Request - POST $endpoint", {"header": reqHeaders, "body": bodyReq.toJson()}.toString());
     final response = await http.post(
-        Uri.parse("$BASE_URL/$LOGIN"),
-        headers: <String, String>{
-            'Content-Type': 'application/json',
-            },
-        body: jsonEncode(<String, dynamic>{
-            'username': bodyReq.username,
-            'password': bodyReq.password,
-        }),
+        Uri.parse(endpoint),
+        headers: reqHeaders,
+        body: jsonEncode(bodyReq.toJson()),
     );
+    httpLogging("Response - Post $endpoint", {"status": response.statusCode, "body": response.body}.toString());
 
     String respBody = response.body;
 
@@ -43,37 +45,35 @@ Future<SigninResp> login(SigninReq bodyReq) async {
 }
 
 Future<Map<String, dynamic>> signUp(SignupReq bodyReq) async {
-    // String resp;
+    String endpoint = "$BASE_URL/$SIGNUP";
+    Map<String, String> reqHeaders = {
+        'Content-Type': 'application/json',
+    };
+
+    httpLogging("Request - POST $endpoint ", {"header": reqHeaders, "body": bodyReq.toJson().toString()}.toString());
     final response = await http.post(
-        Uri.parse("$BASE_URL/$SIGNUP"),
-        headers: <String, String>{
-            'Content-Type': 'application/json',
-            },
+        Uri.parse(endpoint),
+        headers: reqHeaders,
         body: jsonEncode(bodyReq.toJson()),
     );
-    String respBody = response.body;
+    httpLogging("Response - POST $endpoint" , {"status": response.statusCode, "body": response.body}.toString());
     
-    return {"status": response.statusCode, "body": respBody};
-
-
+    return {"status": response.statusCode, "body": response.body};
 }
 
 Future<UserDataResp> getUserData(String jwt, String username) async {
+    String endpoint = "$BASE_URL/$userData/$username";
     UserDataResp userDataResp;
     Map<String, String> reqHeaders = {
         "Authorization": "Bearer $jwt"
     };
 
-    DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch);
-    debugPrint("${tsdate.year.toString()}-${tsdate.month.toString().length == 1 ? "0" : ""}${tsdate.month.toString()}-${tsdate.day.toString().length == 1 ? "0" : ""}${tsdate.day.toString()} ${tsdate.hour.toString().length == 1 ? "0" : ""}${tsdate.hour.toString()}:${tsdate.minute.toString().length == 1 ? "0" : ""}${tsdate.minute.toString()}:${tsdate.second.toString().length == 1 ? "0" : ""}${tsdate.second.toString()}.${tsdate.millisecond.toString()} GET $BASE_URL/$userData/$username Request : ");
-    debugPrint("Header : ${reqHeaders.toString()}");
-    debugPrint("Body : null");
-
+    httpLogging("Request - GET $endpoint", {"header": reqHeaders, "body": null}.toString());
     final response = await http.get(
-        Uri.parse("$BASE_URL/$userData/$username"),
+        Uri.parse(endpoint),
         headers: reqHeaders
     );
-    tsdate = DateTime.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch);
+    httpLogging("Response - GET $endpoint", {"status": response.statusCode, "body": response.body}.toString());
     String respBody = response.body;
 
     if(response.statusCode == 200) {
@@ -109,48 +109,44 @@ Future<UserDataResp> getUserData(String jwt, String username) async {
                 }
             );
         }
-      
     }
-    debugPrint("${tsdate.year.toString()}-${tsdate.month.toString().length == 1 ? "0" : ""}${tsdate.month.toString()}-${tsdate.day.toString().length == 1 ? "0" : ""}${tsdate.day.toString()} ${tsdate.hour.toString().length == 1 ? "0" : ""}${tsdate.hour.toString()}:${tsdate.minute.toString().length == 1 ? "0" : ""}${tsdate.minute.toString()}:${tsdate.second.toString().length == 1 ? "0" : ""}${tsdate.second.toString()}.${tsdate.millisecond.toString()} GET $BASE_URL/$userData/$username Response : ${userDataResp.toJson().toString()}");
+    
     return userDataResp;
-
 }
 
 Future<UserData> updateUserData(String? username, String? token, UserData? data) async{
     String endpoint = "$BASE_URL/$PROFILE/$username";
-    String loggerName = "PUT $BASE_URL/$PROFILE/$username";
-    // UserData data = UserData.emptyValue();
     Map<String, String> reqHeaders = {
-        "Authorization": "Bearer $token"
+        "Authorization": "Bearer $token",
+        'Content-Type': 'application/json',
     };
-    // String reqBody = jsonEncode(data!.toJson());
-
-    httpLogging("$loggerName Request", {"headers": reqHeaders,"body": data!.toJson()}.toString());
-
     http.Response? response;
 
     try {
+        httpLogging("Request - PUT $endpoint", {"header": reqHeaders,"body": data!.toJson()}.toString());
         response = await http.put(
             Uri.parse(endpoint),
             headers: reqHeaders,
-            body: data.toJson()
+            body: jsonEncode(data.toJson())
         );
+        httpLogging("Response - PUT $endpoint", response.body.toString());
+
         Map<String, dynamic> respBody = jsonDecode(response.body);
         Map<String, dynamic> rsp = respBody['data'];
-        debugPrint("test : ${respBody['data']['username']} ${respBody['data'].runtimeType}");
-        UserData.fromJson(rsp);
+        if(response.statusCode == 200) {
+            data = UserData.fromJson(rsp);
+        }
+        // debugPrint("test : ${respBody['data']['username']} ${respBody['data'].runtimeType}");
     } catch (e) {
         debugPrint("Error updateUserData : ${e.toString()}");
         debugPrintStack();
     }
 
-    httpLogging("$loggerName Response", response!.body.toString());
-
-    return data;
+    return data!;
 }
 
 void httpLogging(String name, String value) {
     DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch);
-    debugPrint("${tsdate.year.toString()}-${tsdate.month.toString().length == 1 ? "0" : ""}${tsdate.month.toString()}-${tsdate.day.toString().length == 1 ? "0" : ""}${tsdate.day.toString()} ${tsdate.hour.toString().length == 1 ? "0" : ""}${tsdate.hour.toString()}:${tsdate.minute.toString().length == 1 ? "0" : ""}${tsdate.minute.toString()}:${tsdate.second.toString().length == 1 ? "0" : ""}${tsdate.second.toString()}.${tsdate.millisecond.toString()} $name : ");
-    debugPrint(value);
+    debugPrint("${tsdate.year.toString()}-${tsdate.month.toString().length == 1 ? "0" : ""}${tsdate.month.toString()}-${tsdate.day.toString().length == 1 ? "0" : ""}${tsdate.day.toString()} ${tsdate.hour.toString().length == 1 ? "0" : ""}${tsdate.hour.toString()}:${tsdate.minute.toString().length == 1 ? "0" : ""}${tsdate.minute.toString()}:${tsdate.second.toString().length == 1 ? "0" : ""}${tsdate.second.toString()}.${tsdate.millisecond.toString()} $name : $value");
+    // debugPrint();
 }
