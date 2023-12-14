@@ -8,3 +8,14 @@ class UnathorizedError extends Error{
         return message;
     }
 }
+
+class UserNotFoundException extends Error{
+    final String message;
+
+    UserNotFoundException({required this.message});
+
+    @override
+    String toString() {
+        return message;
+    } 
+}
