@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/edit_profile_screen.dart';
+import 'package:flutter_application_1/pages/forgot_password_screen.dart';
 import 'package:flutter_application_1/pages/login_screen.dart';
 import 'package:flutter_application_1/pages/signup_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,6 +24,10 @@ final router = Provider<GoRouter>((ref) {
             GoRoute(
                 path: '/signup',
                 builder: (context, state) => const SignupScreen(),
+            ),
+            GoRoute(
+                path: '/forget-password',
+                builder: (context, state) => const ForgotPasswordScreen()
             ),
         ],
         redirect: (context, state) {
