@@ -9,7 +9,7 @@ import 'package:flutter_application_1/dto/auth_dto.dart';
 import 'package:http/http.dart' as http;
 
 Future<SigninResp> login(SigninReq bodyReq) async {
-    String endpoint = "$BASE_URL/$LOGIN";
+    String endpoint = "$baseURL/$login";
     Map<String, String> reqHeaders = {
         'Content-Type': 'application/json',
     };
@@ -48,7 +48,7 @@ Future<SigninResp> login(SigninReq bodyReq) async {
 }
 
 Future<Map<String, dynamic>> signUp(SignupReq bodyReq) async {
-    String endpoint = "$BASE_URL/$SIGNUP";
+    String endpoint = "$baseURL/$signUp";
     Map<String, String> reqHeaders = {
         'Content-Type': 'application/json',
     };
@@ -65,7 +65,7 @@ Future<Map<String, dynamic>> signUp(SignupReq bodyReq) async {
 }
 
 Future<UserDataResp> getUserData(String jwt, String username) async {
-    String endpoint = "$BASE_URL/$userData/$username";
+    String endpoint = "$baseURL/$userData/$username";
     UserDataResp userDataResp;
     Map<String, String> reqHeaders = {
         "Authorization": "Bearer $jwt"
@@ -118,7 +118,7 @@ Future<UserDataResp> getUserData(String jwt, String username) async {
 }
 
 Future<UserData> updateUserData(String? username, String? token, UserData? data) async{
-    String endpoint = "$BASE_URL/$PROFILE/$username";
+    String endpoint = "$baseURL/$profile/$username";
     Map<String, String> reqHeaders = {
         "Authorization": "Bearer $token",
         'Content-Type': 'application/json',
