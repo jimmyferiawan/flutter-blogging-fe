@@ -1,23 +1,19 @@
 {
     "signup_req": {
-        "username": "astuti",
-        "firstName": "Astuti",
-        "middleName": "Astuti",
-        "lastName": "Putri",
-        "mobile": "087784517741",
-        "email": "kacangserabii@mail.com",
+        "username": "your_username",
+        "firstName": "Your Fullname",
+        "mobile": "87xxxxxxx18",
+        "email": "yourname@yourdomain.etension",
         "password": "123456"
     },
     "signup_resp": {
         "error": false,
         "message": "Registrasi Berhasil",
         "data": {
-            "username": "astuti",
-            "firstName": "Astuti",
-            "middleName": "Astuti",
-            "lastName": "Putri",
-            "email": "kacangserabii@mail.com",
-            "mobile": "087784517741"
+            "username": "your_username",
+            "firstName": "Your Fullname",
+            "email": "yourname@yourdomain.etension",
+            "mobile": "87xxxxxxx18"
         }
     },
     "signup_resp_abnormal": {
@@ -25,7 +21,7 @@
         "message": "Nomoh HP sudah digunakan, silahkan pilih yang lain"
     },
     "login_req": {
-        "username": "jimmy",
+        "username": "your_username",
         "password": "123456"
     },
     "loign_resp": {
@@ -54,10 +50,10 @@
         "message": "User not found"
     },
     "update_user_profile_req": {
-        "username": "jimmy",
-        "email": "feriawanjimmy@mail.com",
-        "firstName": "Jimmy Feriawan",
-        "mobile": "087784517748",
+        "username": "your_username",
+        "email": "yourname@yourdomain.etension",
+        "firstName": "Your Fullname",
+        "mobile": "87xxxxxxx18",
         "intro": "Ini Bio profile jimmy",
         "birthdate": "30-08-1945"
     },
@@ -65,12 +61,26 @@
         "error": false,
         "message": "Berhasil update data",
         "data": {
-            "username": "jimmy",
-            "firstName": "Jimmy Feriawana",
-            "mobile": "087784517748",
-            "email": "feriawanjimmy@mail.com",
+            "username": "your_username",
+            "firstName": "Your Fullname",
+            "mobile": "087xxxxxxx18",
+            "email": "yourname@yourdomain.etension",
             "birthdate": "30-08-1945",
             "intro": "Ini Bio profile"
         }
+    },
+    "forget_password_request_email_otp_resp" : {
+        "error":false,
+        "message":"Email OTP terkirim ke f*********mmy@yourdomain.etension"
+    },
+    "forget_password_set_new_password_req": {
+        "email": "yourname@yourdomain.etension",
+        "token": "0OmaGZXIuCwBcsVLmeHi",
+        "newPassword": "123456"
+    },
+    "forget_password_set_new_password_resp": {
+        "error": false,
+        "message": "Email terkirim ke f*********mmy@yourdomain.etension"
     }
+    
 }
