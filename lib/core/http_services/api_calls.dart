@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/helpers/error_mapper.dart';
+import 'package:flutter_application_1/core/helpers/logging.dart';
 import 'package:flutter_application_1/core/helpers/persistence_storage.dart';
 import 'package:flutter_application_1/core/http_services/path.dart';
 import 'package:flutter_application_1/dto/auth_dto.dart';
@@ -145,12 +146,6 @@ Future<UserData> updateUserData(String? username, String? token, UserData? data)
     }
 
     return data!;
-}
-
-void httpLogging(String name, String value) {
-    DateTime tsdate = DateTime.fromMillisecondsSinceEpoch(DateTime.now().millisecondsSinceEpoch);
-    debugPrint("${tsdate.year.toString()}-${tsdate.month.toString().length == 1 ? "0" : ""}${tsdate.month.toString()}-${tsdate.day.toString().length == 1 ? "0" : ""}${tsdate.day.toString()} ${tsdate.hour.toString().length == 1 ? "0" : ""}${tsdate.hour.toString()}:${tsdate.minute.toString().length == 1 ? "0" : ""}${tsdate.minute.toString()}:${tsdate.second.toString().length == 1 ? "0" : ""}${tsdate.second.toString()}.${tsdate.millisecond.toString()} $name : $value");
-    // debugPrint();
 }
 
 Future<UserData?> initUserAccount() async{
