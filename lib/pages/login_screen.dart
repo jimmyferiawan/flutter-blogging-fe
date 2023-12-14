@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/components/custom_dialog.dart';
 import 'package:flutter_application_1/components/scrollable_screen.dart';
 import 'package:flutter_application_1/core/helpers/month_mapper.dart';
 import 'package:flutter_application_1/core/helpers/persistence_storage.dart';
@@ -135,12 +136,28 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                         ),
                     ),
                     Padding(
+                        padding: const EdgeInsets.only(left: xPadding, right: xPadding),
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                                GestureDetector(
+                                    onTap: () {
+                                        context.push("/forget-password");
+                                    },
+                                    child: Text(
+                                        "Lupa Password ?", 
+                                        style: TextStyle(color: Colors.red[600], )
+                                    ),
+                                ),
+                            ],
+                        )
+                    ),
+                    Padding(
                         padding: const EdgeInsets.symmetric(horizontal: xPadding, vertical: 16),
                         child: ElevatedButton(
                             onPressed: isLoading.value ? null : () async {
                                 debugPrint("pressed username : ${usernameController.text} password : ${passwordController.text}");
-                            
-                                
+                                                            
                                 if (_formKey.currentState!.validate()) {
                                     setState(() {
                                         message = "";
@@ -285,7 +302,8 @@ class ProfileComponent extends StatelessWidget {
                                     style: OutlinedButton.styleFrom(
                                         side: const BorderSide(
                                             color: Colors.red
-                                        )
+                                        ),
+                                        foregroundColor: Colors.red.shade100
                                     ),
                                     onPressed: logoutFunction, 
                                     child: Text(
@@ -301,25 +319,4 @@ class ProfileComponent extends StatelessWidget {
             ],
         );
     }
-}
-
-void showCustomDialog(BuildContext context, String message) {
-    showDialog(
-        context: context, 
-        builder: (BuildContext context) {
-            BuildContext dialogContext = context;
-            return AlertDialog(
-                title: const Text('Oops!'),
-                content: Text(message),
-                actions: <Widget>[
-                    TextButton(
-                        onPressed: () {
-                            return Navigator.pop(dialogContext);
-                        },
-                        child: const Text('OK'),
-                    ),
-                ],
-            );
-        }
-    );
 }
