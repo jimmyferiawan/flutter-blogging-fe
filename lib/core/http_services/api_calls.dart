@@ -6,6 +6,8 @@ import 'package:flutter_application_1/core/helpers/logging.dart';
 import 'package:flutter_application_1/core/helpers/persistence_storage.dart';
 import 'package:flutter_application_1/core/http_services/path.dart';
 import 'package:flutter_application_1/dto/auth_dto.dart';
+import 'package:flutter_application_1/dto/forget_password_dto.dart';
+import 'package:flutter_application_1/dto/send_otp_forget_password_dto.dart';
 import 'package:http/http.dart' as http;
 
 Future<SigninResp> login(SigninReq bodyReq) async {
@@ -166,4 +168,68 @@ Future<UserData?> initUserAccount() async{
     }
 
     return userData;
+}
+
+Future<SendOtpDTOResponse> sendOtpMail(String? username) async{
+    final String endpoint = "$baseURL/$forgetPasswordSend/$username";
+    Map<String, String> reqHeaders = {
+        'Content-Type': 'application/json',
+    };
+    // Map<String, dynamic> reqBody = bodyReq!.toJson();
+
+    http.Response response;
+
+    await Future.delayed(const Duration(seconds: 3)); // TODO : remove this on build
+    httpLogging("Request - GET $endpoint", {"header": reqHeaders, "body": null}.toString());
+    response = await http.get(
+        Uri.parse(endpoint),
+        headers: reqHeaders,
+        // body: jsonEncode(reqBody)
+    );
+    httpLogging("Response - GET ${response.statusCode}", {"status": response.statusCode, "body": response.body}.toString());
+    Map<String, dynamic> jsonBody = jsonDecode(response.body);
+
+    if(response.statusCode != 200) {
+        String? exceptionMessage;
+
+        if(response.statusCode == 404) {
+            exceptionMessage = "Data tidak ditemukan";
+        }
+        if(response.statusCode == 500) {
+            exceptionMessage = "Terjadi kesalahan, silahkan ulangi beberapa saat lagi";
+        }
+
+        throw UserNotFoundException(message: exceptionMessage!);
+    }
+
+    return SendOtpDTOResponse.fromJson(jsonBody);
+}
+
+Future<SubmitForgetPasswordDTOResponse> sendResetPassword(SubmitForgetPasswordDTORequest requestBody) async{
+    String endpoint = "$baseURL/$forgetPasswordReset";
+    Map<String, String> reqHeaders = {
+        'Content-Type': 'application/json',
+    };
+    Map<String, dynamic> reqBody = requestBody.toJson();
+    http.Response? response;
+
+    httpLogging("Request - POST $endpoint", {"header": reqHeaders, "body": reqBody}.toString());
+    await Future.delayed(const Duration(seconds: 3)); // TODO : remove this on build
+    response = await  http.post(
+        Uri.parse(endpoint),
+        headers: reqHeaders,
+        body: jsonEncode(reqBody),
+    );
+    httpLogging("Response - POST $endpoint", {"status": response.statusCode, "header": response.headers, "body": response.body, }.toString());
+    var resp = SubmitForgetPasswordDTOResponse.fromJson(jsonDecode(response.body));
+    if(response.statusCode != 200) {
+        if(response.statusCode == 404) {
+            throw UserNotFoundException(message: "Pengguna tidak ditemukan");
+        } else if(response.statusCode == 500) {
+            throw UserNotFoundException(message: "Terjadi kesalahan, coba beberapa saat lagi");
+        } else {
+            throw UserNotFoundException(message: resp.message!);
+        }
+    }
+    return resp;
 }
