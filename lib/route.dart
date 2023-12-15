@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/pages/edit_profile_screen.dart';
 import 'package:flutter_application_1/pages/forgot_password_screen.dart';
-import 'package:flutter_application_1/pages/login_screen.dart';
+import 'package:flutter_application_1/pages/index_screen.dart';
 import 'package:flutter_application_1/pages/signup_screen.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -15,7 +15,7 @@ final router = Provider<GoRouter>((ref) {
         routes: <RouteBase>[
             GoRoute(
                 path: '/',
-                builder: (BuildContext context, GoRouterState state) => const LoginScreen(),   
+                builder: (BuildContext context, GoRouterState state) => const Indexcreen(),   
             ),
             GoRoute(
                 path: '/profile/edit',

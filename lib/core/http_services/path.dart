@@ -3,10 +3,10 @@
 const baseURL = "http://127.0.0.1:8080";
 // const baseURL = "http://10.70.131.47:8080";
 // const baseURL = "http://192.168.251.193:8080";
-const login = "signin";
-const signUp = "signup";
-const profile = "u";
-const userData = "u/profile";
-const forgetPasswordCheck = "u/forget-password/check";
-const forgetPasswordSend = "u/forget-password/send";
-const forgetPasswordReset = "u/forget-password/reset";
+const loginPath = "signin";
+const signUpPath = "signup";
+const profilePath = "u";
+const userDataPath = "u/profile";
+const forgetPasswordCheckPath = "u/forget-password/check";
+const forgetPasswordSendPath = "u/forget-password/send";
+const forgetPasswordResetPath = "u/forget-password/reset";

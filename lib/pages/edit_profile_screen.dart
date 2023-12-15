@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/components/custom_circular_progress_indicator.dart';
 import 'package:flutter_application_1/core/helpers/month_mapper.dart';
 import 'package:flutter_application_1/core/helpers/persistence_storage.dart';
 import 'package:flutter_application_1/core/http_services/api_calls.dart';
@@ -205,7 +206,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
                                     UserData formData = UserData(username: inputUsernameController.text, email: inputEmailController.text, mobile: inpuMobileController.text, firstName: inputNamaController.text, intro: inpuIntroController.text, profile: "", birthdate: inpuDateController.text);
                                     ref.read(userDataStateProvider.notifier).setData(formData);
                                     isLoading.value = true;
-                                    await Future.delayed(const Duration(seconds: 2));
+                                    // await Future.delayed(const Duration(seconds: 2)); // TODO : remove this on build prod
                                     try {
                                         formData = UserData(username: inputUsernameController.text, email: inputEmailController.text, mobile: inpuMobileController.text, firstName: inputNamaController.text, intro: inpuIntroController.text, profile: "", birthdate: inpuDateController.text);
                                         userData = await updateUserData(userDataState.username, await getJwtToken(), formData);
@@ -225,7 +226,7 @@ class _EditProfileFormState extends ConsumerState<_EditProfileForm> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                     const Text("Update Data"),
-                                    if (isLoading.value)...[const SizedBox(width: 12) ,const CupertinoActivityIndicator(color: Colors.blue,)]
+                                    if (isLoading.value)...[const SizedBox(width: 12) ,const CustomCircularProgressIndicator(color: Colors.blueAccent,)]
                                 ],
                             )
                         )

@@ -11,7 +11,7 @@ import 'package:flutter_application_1/dto/send_otp_forget_password_dto.dart';
 import 'package:http/http.dart' as http;
 
 Future<SigninResp> login(SigninReq bodyReq) async {
-    String endpoint = "$baseURL/$login";
+    String endpoint = "$baseURL/$loginPath";
     Map<String, String> reqHeaders = {
         'Content-Type': 'application/json',
     };
@@ -67,7 +67,7 @@ Future<Map<String, dynamic>> signUp(SignupReq bodyReq) async {
 }
 
 Future<UserDataResp> getUserData(String jwt, String username) async {
-    String endpoint = "$baseURL/$userData/$username";
+    String endpoint = "$baseURL/$userDataPath/$username";
     UserDataResp userDataResp;
     Map<String, String> reqHeaders = {
         "Authorization": "Bearer $jwt"
@@ -120,7 +120,7 @@ Future<UserDataResp> getUserData(String jwt, String username) async {
 }
 
 Future<UserData> updateUserData(String? username, String? token, UserData? data) async{
-    String endpoint = "$baseURL/$profile/$username";
+    String endpoint = "$baseURL/$profilePath/$username";
     Map<String, String> reqHeaders = {
         "Authorization": "Bearer $token",
         'Content-Type': 'application/json',
@@ -171,7 +171,7 @@ Future<UserData?> initUserAccount() async{
 }
 
 Future<SendOtpDTOResponse> sendOtpMail(String? username) async{
-    final String endpoint = "$baseURL/$forgetPasswordSend/$username";
+    final String endpoint = "$baseURL/$forgetPasswordSendPath/$username";
     Map<String, String> reqHeaders = {
         'Content-Type': 'application/json',
     };
@@ -179,7 +179,7 @@ Future<SendOtpDTOResponse> sendOtpMail(String? username) async{
 
     http.Response response;
 
-    await Future.delayed(const Duration(seconds: 3)); // TODO : remove this on build
+    // await Future.delayed(const Duration(seconds: 3)); // TODO : remove this on build
     httpLogging("Request - GET $endpoint", {"header": reqHeaders, "body": null}.toString());
     response = await http.get(
         Uri.parse(endpoint),
@@ -206,7 +206,7 @@ Future<SendOtpDTOResponse> sendOtpMail(String? username) async{
 }
 
 Future<SubmitForgetPasswordDTOResponse> sendResetPassword(SubmitForgetPasswordDTORequest requestBody) async{
-    String endpoint = "$baseURL/$forgetPasswordReset";
+    String endpoint = "$baseURL/$forgetPasswordResetPath";
     Map<String, String> reqHeaders = {
         'Content-Type': 'application/json',
     };
@@ -214,7 +214,7 @@ Future<SubmitForgetPasswordDTOResponse> sendResetPassword(SubmitForgetPasswordDT
     http.Response? response;
 
     httpLogging("Request - POST $endpoint", {"header": reqHeaders, "body": reqBody}.toString());
-    await Future.delayed(const Duration(seconds: 3)); // TODO : remove this on build
+    // await Future.delayed(const Duration(seconds: 3)); // TODO : remove this on build
     response = await  http.post(
         Uri.parse(endpoint),
         headers: reqHeaders,
