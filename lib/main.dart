@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/core/http_services/api_calls.dart';
 import 'package:flutter_application_1/dto/auth_dto.dart';
@@ -7,6 +9,7 @@ import 'package:flutter_application_1/store/auth_store.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 void main() async{
+    debugPrint("Running App on device : ${Platform.operatingSystem} ${Platform.operatingSystemVersion}");
     WidgetsFlutterBinding.ensureInitialized();
     runApp(const ProviderScope(child: MainApp()));
 }

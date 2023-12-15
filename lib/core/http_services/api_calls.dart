@@ -156,7 +156,7 @@ Future<UserData?> initUserAccount() async{
     bool isSession = jwt != "" && username != "";
     UserDataResp userDataResp ;
     UserData? userData;
-    
+    // await Future.delayed(const Duration(seconds: 5)); // TODO : remove this on build
     try {
         userDataResp = !isSession ? UserDataResp.emptyValue() : await getUserData(jwt, username);
         userData = userDataResp.error ? null : UserData.fromJson(userDataResp.data);

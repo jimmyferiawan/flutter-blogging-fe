@@ -15,7 +15,7 @@ final router = Provider<GoRouter>((ref) {
         routes: <RouteBase>[
             GoRoute(
                 path: '/',
-                builder: (BuildContext context, GoRouterState state) => const Indexcreen(),   
+                builder: (BuildContext context, GoRouterState state) => const IndexScreen(),   
             ),
             GoRoute(
                 path: '/profile/edit',
