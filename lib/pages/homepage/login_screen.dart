@@ -4,6 +4,7 @@ import 'package:flutter_application_1/components/custom_dialog.dart';
 import 'package:flutter_application_1/core/helpers/persistence_storage.dart';
 import 'package:flutter_application_1/core/http_services/api_calls.dart';
 import 'package:flutter_application_1/dto/auth_dto.dart';
+import 'package:flutter_application_1/pages/homepage/banner.dart';
 import 'package:flutter_application_1/store/auth_store.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
@@ -69,6 +70,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
+                    const CarouselCustom(),
                     Padding(
                         padding: const EdgeInsets.symmetric(horizontal: xPadding, vertical: 16),
                         child: TextFormField(

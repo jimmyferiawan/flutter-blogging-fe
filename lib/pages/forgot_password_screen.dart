@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/components/custom_circular_progress_indicator.dart';
 import 'package:flutter_application_1/components/custom_dialog.dart';
+import 'package:flutter_application_1/core/helpers/error_mapper.dart';
 import 'package:flutter_application_1/core/http_services/api_calls.dart';
 import 'package:flutter_application_1/dto/forget_password_dto.dart';
 import 'package:flutter_application_1/dto/send_otp_forget_password_dto.dart';
@@ -18,12 +19,42 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
     final _formKey = GlobalKey<FormState>();
     SnackBar snackBar(String? message) => SnackBar(content: Text(message!),);
     SizedBox verticalSpacer({double verticalHeight=12}) => SizedBox(height: verticalHeight,);
+    final Icon validIcon = const Icon(Icons.check_circle_outline, size: 16, color: Colors.green);
+    final Icon invalidIcon = const Icon(Icons.cancel_outlined, size: 16, color: Colors.red);
 
     Future<String> sendOtp(String? username) async{
         SendOtpDTOResponse response = await sendOtpMail(username);
         debugPrint("Sending OTP to email");
 
         return response.message!;
+    }
+
+    Map<String, bool> passwordRequirementValidate(String newPassword, String newPasswordConfirm) {
+        bool huruBesar = false;
+        bool hurufKecil = false;
+        bool minimalDelapanKarakter = false;
+        bool terdapatAngka = false;
+        bool terdapatHuruf = false;
+        bool konfirmasiPassword = false;
+
+        if(RegExp(r'[A-Z]').hasMatch(newPassword)) huruBesar = true;
+        if(RegExp(r'[a-z]').hasMatch(newPassword)) hurufKecil = true;
+        if(newPassword.length > 7) minimalDelapanKarakter = true;
+        if(RegExp(r'[0-9]').hasMatch(newPassword)) terdapatAngka = true;
+        if(huruBesar || hurufKecil) terdapatHuruf = true;
+        if(newPassword == newPasswordConfirm) konfirmasiPassword = true;
+
+        Map<String, bool> validateResult = {
+            "hurufBesar": huruBesar,
+            "hurufKecil": hurufKecil,
+            "minimalDelapanKarakter": minimalDelapanKarakter,
+            "terdapatAngka": terdapatAngka,
+            "terdapatHuruf": terdapatHuruf,
+            "konfirmasiPassword": konfirmasiPassword,
+        };
+        // debugPrint("passwordRequirementValidate => $validateResult");
+
+        return validateResult;
     }
 
     @override
@@ -38,6 +69,16 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
         ValueNotifier<bool> newPasswordVisible = useState(true);
         ValueNotifier<bool> newPasswordConfirmVisible = useState(true);
         ValueNotifier<String?> isErrorcheckUsername = useState(null);
+        ValueNotifier<Map<String, bool>> passwordRequirement = useState({
+            "hurufBesar": false,
+            "hurufKecil": false,
+            "minimalDelapanKarakter": false,
+            "terdapatAngka": false,
+            "terdapatHuruf": false,
+            "konfirmasiPassword": false,
+        });
+        ValueNotifier<Color> iconColor = useState(Colors.blue);
+        bool isValidAllRequirementPassword = !passwordRequirement.value.containsValue(false);
 
         return Scaffold(
             appBar: AppBar(
@@ -91,6 +132,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                                                 } else {
                                                     // SendOtpDTORequest form = SendOtpDTORequest(email: usernameController.text, token: otpController.text, newPassword: newPasswordController.text);
                                                     String? snackBarMessage;
+                                                    iconColor.value = Colors.blue;
                                                     isErrorcheckUsername.value = null;
 
                                                     try {
@@ -98,21 +140,29 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                                                         String? message = await sendOtp(usernameController.text);
                                                         snackBarMessage = message;
                                                     } catch (e) {
-                                                        snackBarMessage = e.toString();
-                                                        isErrorcheckUsername.value = e.toString();
+                                                        debugPrint(e.runtimeType.toString());
+                                                        if(e == UserNotFoundException) {
+                                                            snackBarMessage = e.toString();
+                                                        } else {
+                                                            snackBarMessage = "Gagal melakukan koneksi, periksa internet anda";
+                                                        }
+                                                        isErrorcheckUsername.value = snackBarMessage;
                                                     } finally {
                                                         isLoadingSendOtp.value = false;
+                                                        iconColor.value = Colors.redAccent;
                                                         Future(() => ScaffoldMessenger.of(context).showSnackBar(snackBar(snackBarMessage)));
                                                     }
                                                 }
                                             }, 
-                                            buttonIcon: const Icon(Icons.send_rounded)
+                                            buttonIcon: Icon(Icons.send_rounded, color: iconColor.value,)
                                         ),
                                 ),
                                 validator: (value) {
                                     if (value == null || value.isEmpty) {
+                                        iconColor.value = Colors.redAccent;
                                         return 'Tidak boleh kosong';
                                     }
+                                        iconColor.value = Colors.blue;
                                         return null;
                                 },
                             ),
@@ -120,8 +170,9 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                             TextFormField(
                                 controller: newPasswordController,
                                 obscureText: newPasswordVisible.value,
-                                onFieldSubmitted: (value) {
-                                    debugPrint(value);
+                                onChanged: (value) {
+                                    // debugPrint(value);
+                                    passwordRequirement.value = passwordRequirementValidate(value, newPasswordConfirmController.text);
                                 },
                                 decoration: InputDecoration(
                                     floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -143,8 +194,10 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                             TextFormField(
                                 controller: newPasswordConfirmController,
                                 obscureText: newPasswordConfirmVisible.value,
-                                onFieldSubmitted: (value) {
-                                    debugPrint(value);
+                                onChanged: (value) {
+                                    // debugPrint("${passwordRequirement.value.toString()}, value == newPasswordController.text : $value == ${newPasswordController.text} ? ${value == newPasswordController.text}");
+                                    bool isEqual = value == newPasswordController.text;
+                                    passwordRequirement.value= {...passwordRequirement.value, ...{"konfirmasiPassword": isEqual}};
                                 },
                                 // controller: usernameController,
                                 decoration: InputDecoration(
@@ -163,9 +216,83 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
                                         return null;
                                 },
                             ),
+                            verticalSpacer(),
+                            Row(
+                                children: [
+                                    Expanded(
+                                        child: Wrap(
+                                            crossAxisAlignment: WrapCrossAlignment.center,
+                                            children: [
+                                                const Text("Huruf besar"),
+                                                const SizedBox(width: 8,),
+                                                passwordRequirement.value["hurufBesar"]! ? validIcon : invalidIcon,
+                                            ],
+                                        )
+                                    ),
+                                    Expanded(
+                                        child: Wrap(
+                                            crossAxisAlignment: WrapCrossAlignment.center,
+                                            children: [
+                                                const Text("Huruf kecil"),
+                                                const SizedBox(width: 8,),
+                                                passwordRequirement.value["hurufKecil"]! ? validIcon : invalidIcon,
+                                            ],
+                                        )
+                                    ),
+                                ],
+                            ),
+                            Row(
+                                children: [
+                                    Expanded(
+                                        child: Wrap(
+                                            crossAxisAlignment: WrapCrossAlignment.center,
+                                            children: [
+                                                const Text("Minimal 8 karakter"),
+                                                const SizedBox(width: 8,),
+                                                passwordRequirement.value["minimalDelapanKarakter"]! ? validIcon : invalidIcon,
+                                            ],
+                                        )
+                                    ),
+                                    Expanded(
+                                        child: Wrap(
+                                            crossAxisAlignment: WrapCrossAlignment.center,
+                                            children: [
+                                                const Text("Terdapat angka"),
+                                                const SizedBox(width: 8,),
+                                                passwordRequirement.value["terdapatAngka"]! ? validIcon : invalidIcon,
+                                            ],
+                                        )
+                                    ),
+                                ],
+                            ),
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                    Expanded(
+                                        child: Wrap(
+                                            crossAxisAlignment: WrapCrossAlignment.center,
+                                            children: [
+                                                const Text("Terdapat huruf"),
+                                                const SizedBox(width: 8,),
+                                                passwordRequirement.value["terdapatHuruf"]! ? validIcon : invalidIcon,
+                                            ],
+                                        )
+                                    ),
+                                    Expanded(
+                                        child: Wrap(
+                                            crossAxisAlignment: WrapCrossAlignment.center,
+                                            children: [
+                                                const Text("Konfirmasi password"),
+                                                const SizedBox(width: 8,),
+                                                passwordRequirement.value["konfirmasiPassword"]! ? validIcon : invalidIcon,
+                                            ],
+                                        )
+                                    ),
+                                ],
+                            ),
                             verticalSpacer(verticalHeight: 16),
                             ElevatedButton(
-                                onPressed: isLoadingSubmitResetPassword.value ? null : () async{
+                                onPressed: !isValidAllRequirementPassword ? null : isLoadingSubmitResetPassword.value ? null : () async{
                                     debugPrint("change password");
                                     if(_formKey.currentState!.validate()) {
                                         SubmitForgetPasswordDTORequest requestBody = SubmitForgetPasswordDTORequest(email: usernameController.text, token: otpController.text, newPassword: newPasswordController.text);
